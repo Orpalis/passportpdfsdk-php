@@ -12,7 +12,7 @@
 /**
  * PassportPDF API
  *
- * Introduction:    PassportPDF API is a REST API that lets you perform complex operations on documents and images easily.  You may consume the API by using our.NET SDK (other platforms / languages are soon to come), or any REST client by sending your requests to the appropriate endpoints.   A list of all the available endpoints can be found on the API reference page at https://passportpdfapi.com/references/api/index.html        Authentication:    Each available operation has a predefined cost, expressed as a number of tokens.  These tokens are deducted from your \"passport,\" which has a unique identifier that acts as an API key. This key is, therefore, required to be provided with each request for the latter to be honored(except if the operation does not have a cost, typically when you request a simple data with a GET).  Your key must be included in the header of the request, under the name \"X-PassportPdf-API-Key.\"  If you are using the.NET SDK, you can either set your key in the ApiKey property of your API instance(PdfApi or ImageApi, for example) or set it globally in the GlobalConfiguration instance if you want to set it once for the whole life cycle of your application.          Communication with the API:    All the available actions are listed on the API reference page, as previously mentioned.  There are several different controllers, i.e., routes, which categorize the actions.For example, you may use the PDF controller(\"/api/pdf\" route) to perform PDF - related operations, and the Image controller(\"/api/image\") for images.  Each action defines what kind of parameters(if any) is expected, and what kind of response is served.Parameters and responses are represented using data models, or \"schemas,\" and are listed in the \"Schemas\" section of the reference.   Parameters and response models of a given action are both prefixed by the controller name, the action name, and \"Parameters\" / \"Response,\" e.g. \"api/pdf/reduce\" respectively receives and serves a PdfReduceParameters and PdfReduceResponse models.  Using the .NET SDK, you will find the objects to interact with the different controllers in the PassportPDF.Api namespace and all the schemas in the PassportPDF.Model namespace.        Processing documents:    Each document manipulation starts with importing the file onto the API.  The LoadDocument action of the PDF controller lets you import your document as a PDF.  Note that the GetPDFImportSupportedFileExtensions action of the same controller will let you know all the different types of files that you may import as a PDF. LoadDocument responds with a JSON-serialized PdfLoadDocumentResponse model, which contains a \"FileId\" property.This identifier is required for the API to know about your document for further manipulations, hence the presence of a \"FileId\" property in the PdfReduceParameters schema (and many other parameters schemas). To download the changes made to a file, you need, of course, to download the new version of the file from the API.  To save your document as a PDF, you will need to use the SaveDocument action of the PDF controller and provide a PdfSaveDocumentParameters data model that contains the identifier of your file.        Errors:    Conventional HTTP response codes are used to indicate the success or failure of an API request.   The Error data model also defines some information about an error that occurred on the API.   Each response model has an Error in its definition, and its sole existence in the serialized response - which should thus always be checked - indicates that something went wrong.  Among the information given by the Error schema, \"ResultCode\" specifies a value of the \"PassportPDFStatus\" enumeration, that defines a first level of error information. \"InternalErrorId\" defines a unique identifier for the error, which comes very handy for us to troubleshoot any issue you may encounter quickly.        Efficiency considerations:    Multipart upload/download is available and lets you directly stream a file to/from the API.  In the PDF controller, LoadDocument/LoadDocumentMultipart and SaveDocument/SaveDocumentToFile may be used to upload/download a document using respectively binary data serialization and streaming multipart HTTP requests.  The second approach should be favored when dealing with large files, as it will be much more efficient in that context.
+ * Another brick in the cloud
  *
  * The version of the OpenAPI document: 1.0.1
  * 
@@ -8390,6 +8390,273 @@ class PDFApi
     }
 
     /**
+     * Operation removeText
+     *
+     * Removes text (all text or only invisible one) from a previously uploaded PDF.
+     *
+     * @param  \OpenAPI\Client\Model\PdfRemoveTextParameters $pdf_remove_text_parameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     *
+     * @throws \OpenAPI\Client\ApiException on non-2xx response
+     * @throws \InvalidArgumentException
+     * @return \OpenAPI\Client\Model\PdfRemoveTextResponse
+     */
+    public function removeText($pdf_remove_text_parameters)
+    {
+        list($response) = $this->removeTextWithHttpInfo($pdf_remove_text_parameters);
+        return $response;
+    }
+
+    /**
+     * Operation removeTextWithHttpInfo
+     *
+     * Removes text (all text or only invisible one) from a previously uploaded PDF.
+     *
+     * @param  \OpenAPI\Client\Model\PdfRemoveTextParameters $pdf_remove_text_parameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     *
+     * @throws \OpenAPI\Client\ApiException on non-2xx response
+     * @throws \InvalidArgumentException
+     * @return array of \OpenAPI\Client\Model\PdfRemoveTextResponse, HTTP status code, HTTP response headers (array of strings)
+     */
+    public function removeTextWithHttpInfo($pdf_remove_text_parameters)
+    {
+        $request = $this->removeTextRequest($pdf_remove_text_parameters);
+
+        try {
+            $options = $this->createHttpClientOption();
+            try {
+                $response = $this->client->send($request, $options);
+            } catch (RequestException $e) {
+                throw new ApiException(
+                    "[{$e->getCode()}] {$e->getMessage()}",
+                    $e->getCode(),
+                    $e->getResponse() ? $e->getResponse()->getHeaders() : null,
+                    $e->getResponse() ? (string) $e->getResponse()->getBody() : null
+                );
+            }
+
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode < 200 || $statusCode > 299) {
+                throw new ApiException(
+                    sprintf(
+                        '[%d] Error connecting to the API (%s)',
+                        $statusCode,
+                        $request->getUri()
+                    ),
+                    $statusCode,
+                    $response->getHeaders(),
+                    $response->getBody()
+                );
+            }
+
+            $responseBody = $response->getBody();
+            switch($statusCode) {
+                case 200:
+                    if ('\OpenAPI\Client\Model\PdfRemoveTextResponse' === '\SplFileObject') {
+                        $content = $responseBody; //stream goes to serializer
+                    } else {
+                        $content = (string) $responseBody;
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, '\OpenAPI\Client\Model\PdfRemoveTextResponse', []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+            }
+
+            $returnType = '\OpenAPI\Client\Model\PdfRemoveTextResponse';
+            $responseBody = $response->getBody();
+            if ($returnType === '\SplFileObject') {
+                $content = $responseBody; //stream goes to serializer
+            } else {
+                $content = (string) $responseBody;
+            }
+
+            return [
+                ObjectSerializer::deserialize($content, $returnType, []),
+                $response->getStatusCode(),
+                $response->getHeaders()
+            ];
+
+        } catch (ApiException $e) {
+            switch ($e->getCode()) {
+                case 200:
+                    $data = ObjectSerializer::deserialize(
+                        $e->getResponseBody(),
+                        '\OpenAPI\Client\Model\PdfRemoveTextResponse',
+                        $e->getResponseHeaders()
+                    );
+                    $e->setResponseObject($data);
+                    break;
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Operation removeTextAsync
+     *
+     * Removes text (all text or only invisible one) from a previously uploaded PDF.
+     *
+     * @param  \OpenAPI\Client\Model\PdfRemoveTextParameters $pdf_remove_text_parameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function removeTextAsync($pdf_remove_text_parameters)
+    {
+        return $this->removeTextAsyncWithHttpInfo($pdf_remove_text_parameters)
+            ->then(
+                function ($response) {
+                    return $response[0];
+                }
+            );
+    }
+
+    /**
+     * Operation removeTextAsyncWithHttpInfo
+     *
+     * Removes text (all text or only invisible one) from a previously uploaded PDF.
+     *
+     * @param  \OpenAPI\Client\Model\PdfRemoveTextParameters $pdf_remove_text_parameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Promise\PromiseInterface
+     */
+    public function removeTextAsyncWithHttpInfo($pdf_remove_text_parameters)
+    {
+        $returnType = '\OpenAPI\Client\Model\PdfRemoveTextResponse';
+        $request = $this->removeTextRequest($pdf_remove_text_parameters);
+
+        return $this->client
+            ->sendAsync($request, $this->createHttpClientOption())
+            ->then(
+                function ($response) use ($returnType) {
+                    $responseBody = $response->getBody();
+                    if ($returnType === '\SplFileObject') {
+                        $content = $responseBody; //stream goes to serializer
+                    } else {
+                        $content = (string) $responseBody;
+                    }
+
+                    return [
+                        ObjectSerializer::deserialize($content, $returnType, []),
+                        $response->getStatusCode(),
+                        $response->getHeaders()
+                    ];
+                },
+                function ($exception) {
+                    $response = $exception->getResponse();
+                    $statusCode = $response->getStatusCode();
+                    throw new ApiException(
+                        sprintf(
+                            '[%d] Error connecting to the API (%s)',
+                            $statusCode,
+                            $exception->getRequest()->getUri()
+                        ),
+                        $statusCode,
+                        $response->getHeaders(),
+                        $response->getBody()
+                    );
+                }
+            );
+    }
+
+    /**
+     * Create request for operation 'removeText'
+     *
+     * @param  \OpenAPI\Client\Model\PdfRemoveTextParameters $pdf_remove_text_parameters A PdfRemoveTextParameters object specifying the parameters of the action. (required)
+     *
+     * @throws \InvalidArgumentException
+     * @return \GuzzleHttp\Psr7\Request
+     */
+    protected function removeTextRequest($pdf_remove_text_parameters)
+    {
+        // verify the required parameter 'pdf_remove_text_parameters' is set
+        if ($pdf_remove_text_parameters === null || (is_array($pdf_remove_text_parameters) && count($pdf_remove_text_parameters) === 0)) {
+            throw new \InvalidArgumentException(
+                'Missing the required parameter $pdf_remove_text_parameters when calling removeText'
+            );
+        }
+
+        $resourcePath = '/api/pdf/RemoveText';
+        $formParams = [];
+        $queryParams = [];
+        $headerParams = [];
+        $httpBody = '';
+        $multipart = false;
+
+
+
+        // body params
+        $_tempBody = null;
+        if (isset($pdf_remove_text_parameters)) {
+            $_tempBody = $pdf_remove_text_parameters;
+        }
+
+        if ($multipart) {
+            $headers = $this->headerSelector->selectHeadersForMultipart(
+                ['text/plain', 'application/json', 'text/json']
+            );
+        } else {
+            $headers = $this->headerSelector->selectHeaders(
+                ['text/plain', 'application/json', 'text/json'],
+                ['application/json-patch+json', 'application/json', 'text/json', 'application/_*+json']
+            );
+        }
+
+        // for model (json/xml)
+        if (isset($_tempBody)) {
+            // $_tempBody is the method argument, if present
+            if ($headers['Content-Type'] === 'application/json') {
+                $httpBody = \GuzzleHttp\json_encode(ObjectSerializer::sanitizeForSerialization($_tempBody));
+            } else {
+                $httpBody = $_tempBody;
+            }
+        } elseif (count($formParams) > 0) {
+            if ($multipart) {
+                $multipartContents = [];
+                foreach ($formParams as $formParamName => $formParamValue) {
+                    $multipartContents[] = [
+                        'name' => $formParamName,
+                        'contents' => $formParamValue
+                    ];
+                }
+                // for HTTP post (form)
+                $httpBody = new MultipartStream($multipartContents);
+
+            } elseif ($headers['Content-Type'] === 'application/json') {
+                $httpBody = \GuzzleHttp\json_encode($formParams);
+
+            } else {
+                // for HTTP post (form)
+                $httpBody = \GuzzleHttp\Psr7\build_query($formParams);
+            }
+        }
+
+
+        $defaultHeaders = [];
+        if ($this->config->getUserAgent()) {
+            $defaultHeaders['User-Agent'] = $this->config->getUserAgent();
+        }
+
+        $headers = array_merge(
+            $defaultHeaders,
+            $headerParams,
+            $headers
+        );
+
+        $query = \GuzzleHttp\Psr7\build_query($queryParams);
+        return new Request(
+            'POST',
+            $this->config->getHost() . $resourcePath . ($query ? "?{$query}" : ''),
+            $headers,
+            $httpBody
+        );
+    }
+
+    /**
      * Operation reorderPages
      *
      * Reorders pages of a previously uploaded document.
@@ -9193,7 +9460,7 @@ class PDFApi
     /**
      * Operation saveAsJPEG
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9210,7 +9477,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGWithHttpInfo
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9298,7 +9565,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGAsync
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9318,7 +9585,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9460,7 +9727,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGFile
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9477,7 +9744,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGFileWithHttpInfo
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9565,7 +9832,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGFileAsync
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9585,7 +9852,7 @@ class PDFApi
     /**
      * Operation saveAsJPEGFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as JPEG.
+     * Saves a previously uploaded document as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsJPEGParameters $pdf_save_as_jpeg_parameters A PdfSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -9727,7 +9994,7 @@ class PDFApi
     /**
      * Operation saveAsPNG
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -9744,7 +10011,7 @@ class PDFApi
     /**
      * Operation saveAsPNGWithHttpInfo
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -9832,7 +10099,7 @@ class PDFApi
     /**
      * Operation saveAsPNGAsync
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -9852,7 +10119,7 @@ class PDFApi
     /**
      * Operation saveAsPNGAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -9994,7 +10261,7 @@ class PDFApi
     /**
      * Operation saveAsPNGFile
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -10011,7 +10278,7 @@ class PDFApi
     /**
      * Operation saveAsPNGFileWithHttpInfo
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -10099,7 +10366,7 @@ class PDFApi
     /**
      * Operation saveAsPNGFileAsync
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -10119,7 +10386,7 @@ class PDFApi
     /**
      * Operation saveAsPNGFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as PNG.
+     * Saves a previously uploaded document as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsPNGParameters $pdf_save_as_png_parameters A PdfSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -10261,7 +10528,7 @@ class PDFApi
     /**
      * Operation saveAsTIFF
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10278,7 +10545,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFWithHttpInfo
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10366,7 +10633,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFAsync
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10386,7 +10653,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10528,7 +10795,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFFile
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10545,7 +10812,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFFileWithHttpInfo
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10633,7 +10900,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFFileAsync
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10653,7 +10920,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as TIFF.
+     * Saves a previously uploaded document as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFParameters $pdf_save_as_tiff_parameters A PdfSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -10795,7 +11062,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipage
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -10812,7 +11079,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageWithHttpInfo
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -10900,7 +11167,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageAsync
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -10920,7 +11187,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -11062,7 +11329,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageFile
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -11079,7 +11346,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageFileWithHttpInfo
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -11167,7 +11434,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageFileAsync
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -11187,7 +11454,7 @@ class PDFApi
     /**
      * Operation saveAsTIFFMultipageFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as multipage TIFF.
+     * Saves a previously uploaded document as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveAsTIFFMultipageParameters $pdf_save_as_tiff_multipage_parameters A PdfSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -11329,7 +11596,7 @@ class PDFApi
     /**
      * Operation saveDocument
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11346,7 +11613,7 @@ class PDFApi
     /**
      * Operation saveDocumentWithHttpInfo
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11434,7 +11701,7 @@ class PDFApi
     /**
      * Operation saveDocumentAsync
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11454,7 +11721,7 @@ class PDFApi
     /**
      * Operation saveDocumentAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11596,7 +11863,7 @@ class PDFApi
     /**
      * Operation saveDocumentToFile
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11613,7 +11880,7 @@ class PDFApi
     /**
      * Operation saveDocumentToFileWithHttpInfo
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11701,7 +11968,7 @@ class PDFApi
     /**
      * Operation saveDocumentToFileAsync
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *
@@ -11721,7 +11988,7 @@ class PDFApi
     /**
      * Operation saveDocumentToFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded document as PDF.
+     * Saves a previously uploaded document as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\PdfSaveDocumentParameters $pdf_save_document_parameters A PdfSaveDocumentParameters object specifying the parameters of the action. (required)
      *

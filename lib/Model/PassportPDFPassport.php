@@ -13,7 +13,7 @@
 /**
  * PassportPDF API
  *
- * Introduction:    PassportPDF API is a REST API that lets you perform complex operations on documents and images easily.  You may consume the API by using our.NET SDK (other platforms / languages are soon to come), or any REST client by sending your requests to the appropriate endpoints.   A list of all the available endpoints can be found on the API reference page at https://passportpdfapi.com/references/api/index.html        Authentication:    Each available operation has a predefined cost, expressed as a number of tokens.  These tokens are deducted from your \"passport,\" which has a unique identifier that acts as an API key. This key is, therefore, required to be provided with each request for the latter to be honored(except if the operation does not have a cost, typically when you request a simple data with a GET).  Your key must be included in the header of the request, under the name \"X-PassportPdf-API-Key.\"  If you are using the.NET SDK, you can either set your key in the ApiKey property of your API instance(PdfApi or ImageApi, for example) or set it globally in the GlobalConfiguration instance if you want to set it once for the whole life cycle of your application.          Communication with the API:    All the available actions are listed on the API reference page, as previously mentioned.  There are several different controllers, i.e., routes, which categorize the actions.For example, you may use the PDF controller(\"/api/pdf\" route) to perform PDF - related operations, and the Image controller(\"/api/image\") for images.  Each action defines what kind of parameters(if any) is expected, and what kind of response is served.Parameters and responses are represented using data models, or \"schemas,\" and are listed in the \"Schemas\" section of the reference.   Parameters and response models of a given action are both prefixed by the controller name, the action name, and \"Parameters\" / \"Response,\" e.g. \"api/pdf/reduce\" respectively receives and serves a PdfReduceParameters and PdfReduceResponse models.  Using the .NET SDK, you will find the objects to interact with the different controllers in the PassportPDF.Api namespace and all the schemas in the PassportPDF.Model namespace.        Processing documents:    Each document manipulation starts with importing the file onto the API.  The LoadDocument action of the PDF controller lets you import your document as a PDF.  Note that the GetPDFImportSupportedFileExtensions action of the same controller will let you know all the different types of files that you may import as a PDF. LoadDocument responds with a JSON-serialized PdfLoadDocumentResponse model, which contains a \"FileId\" property.This identifier is required for the API to know about your document for further manipulations, hence the presence of a \"FileId\" property in the PdfReduceParameters schema (and many other parameters schemas). To download the changes made to a file, you need, of course, to download the new version of the file from the API.  To save your document as a PDF, you will need to use the SaveDocument action of the PDF controller and provide a PdfSaveDocumentParameters data model that contains the identifier of your file.        Errors:    Conventional HTTP response codes are used to indicate the success or failure of an API request.   The Error data model also defines some information about an error that occurred on the API.   Each response model has an Error in its definition, and its sole existence in the serialized response - which should thus always be checked - indicates that something went wrong.  Among the information given by the Error schema, \"ResultCode\" specifies a value of the \"PassportPDFStatus\" enumeration, that defines a first level of error information. \"InternalErrorId\" defines a unique identifier for the error, which comes very handy for us to troubleshoot any issue you may encounter quickly.        Efficiency considerations:    Multipart upload/download is available and lets you directly stream a file to/from the API.  In the PDF controller, LoadDocument/LoadDocumentMultipart and SaveDocument/SaveDocumentToFile may be used to upload/download a document using respectively binary data serialization and streaming multipart HTTP requests.  The second approach should be favored when dealing with large files, as it will be much more efficient in that context.
+ * Another brick in the cloud
  *
  * The version of the OpenAPI document: 1.0.1
  * 
@@ -69,6 +69,7 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
         'is_active' => 'bool',
         'tokens_percent_usage_alert' => 'int',
         'tokens_percent_usage_alert_sent' => 'bool',
+        'is_managed' => 'bool',
         'next_monthly_term' => '\DateTime',
         'remaining_tokens' => 'int'
     ];
@@ -91,6 +92,7 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
         'is_active' => null,
         'tokens_percent_usage_alert' => 'int32',
         'tokens_percent_usage_alert_sent' => null,
+        'is_managed' => null,
         'next_monthly_term' => 'date-time',
         'remaining_tokens' => 'int64'
     ];
@@ -134,6 +136,7 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
         'is_active' => 'IsActive',
         'tokens_percent_usage_alert' => 'TokensPercentUsageAlert',
         'tokens_percent_usage_alert_sent' => 'TokensPercentUsageAlertSent',
+        'is_managed' => 'IsManaged',
         'next_monthly_term' => 'NextMonthlyTerm',
         'remaining_tokens' => 'RemainingTokens'
     ];
@@ -156,6 +159,7 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
         'is_active' => 'setIsActive',
         'tokens_percent_usage_alert' => 'setTokensPercentUsageAlert',
         'tokens_percent_usage_alert_sent' => 'setTokensPercentUsageAlertSent',
+        'is_managed' => 'setIsManaged',
         'next_monthly_term' => 'setNextMonthlyTerm',
         'remaining_tokens' => 'setRemainingTokens'
     ];
@@ -178,6 +182,7 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
         'is_active' => 'getIsActive',
         'tokens_percent_usage_alert' => 'getTokensPercentUsageAlert',
         'tokens_percent_usage_alert_sent' => 'getTokensPercentUsageAlertSent',
+        'is_managed' => 'getIsManaged',
         'next_monthly_term' => 'getNextMonthlyTerm',
         'remaining_tokens' => 'getRemainingTokens'
     ];
@@ -254,6 +259,7 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
         $this->container['is_active'] = isset($data['is_active']) ? $data['is_active'] : null;
         $this->container['tokens_percent_usage_alert'] = isset($data['tokens_percent_usage_alert']) ? $data['tokens_percent_usage_alert'] : null;
         $this->container['tokens_percent_usage_alert_sent'] = isset($data['tokens_percent_usage_alert_sent']) ? $data['tokens_percent_usage_alert_sent'] : null;
+        $this->container['is_managed'] = isset($data['is_managed']) ? $data['is_managed'] : null;
         $this->container['next_monthly_term'] = isset($data['next_monthly_term']) ? $data['next_monthly_term'] : null;
         $this->container['remaining_tokens'] = isset($data['remaining_tokens']) ? $data['remaining_tokens'] : null;
     }
@@ -566,6 +572,30 @@ class PassportPDFPassport implements ModelInterface, ArrayAccess
     public function setTokensPercentUsageAlertSent($tokens_percent_usage_alert_sent)
     {
         $this->container['tokens_percent_usage_alert_sent'] = $tokens_percent_usage_alert_sent;
+
+        return $this;
+    }
+
+    /**
+     * Gets is_managed
+     *
+     * @return bool|null
+     */
+    public function getIsManaged()
+    {
+        return $this->container['is_managed'];
+    }
+
+    /**
+     * Sets is_managed
+     *
+     * @param bool|null $is_managed is_managed
+     *
+     * @return $this
+     */
+    public function setIsManaged($is_managed)
+    {
+        $this->container['is_managed'] = $is_managed;
 
         return $this;
     }

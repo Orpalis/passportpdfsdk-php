@@ -13,7 +13,7 @@
 /**
  * PassportPDF API
  *
- * Introduction:    PassportPDF API is a REST API that lets you perform complex operations on documents and images easily.  You may consume the API by using our.NET SDK (other platforms / languages are soon to come), or any REST client by sending your requests to the appropriate endpoints.   A list of all the available endpoints can be found on the API reference page at https://passportpdfapi.com/references/api/index.html        Authentication:    Each available operation has a predefined cost, expressed as a number of tokens.  These tokens are deducted from your \"passport,\" which has a unique identifier that acts as an API key. This key is, therefore, required to be provided with each request for the latter to be honored(except if the operation does not have a cost, typically when you request a simple data with a GET).  Your key must be included in the header of the request, under the name \"X-PassportPdf-API-Key.\"  If you are using the.NET SDK, you can either set your key in the ApiKey property of your API instance(PdfApi or ImageApi, for example) or set it globally in the GlobalConfiguration instance if you want to set it once for the whole life cycle of your application.          Communication with the API:    All the available actions are listed on the API reference page, as previously mentioned.  There are several different controllers, i.e., routes, which categorize the actions.For example, you may use the PDF controller(\"/api/pdf\" route) to perform PDF - related operations, and the Image controller(\"/api/image\") for images.  Each action defines what kind of parameters(if any) is expected, and what kind of response is served.Parameters and responses are represented using data models, or \"schemas,\" and are listed in the \"Schemas\" section of the reference.   Parameters and response models of a given action are both prefixed by the controller name, the action name, and \"Parameters\" / \"Response,\" e.g. \"api/pdf/reduce\" respectively receives and serves a PdfReduceParameters and PdfReduceResponse models.  Using the .NET SDK, you will find the objects to interact with the different controllers in the PassportPDF.Api namespace and all the schemas in the PassportPDF.Model namespace.        Processing documents:    Each document manipulation starts with importing the file onto the API.  The LoadDocument action of the PDF controller lets you import your document as a PDF.  Note that the GetPDFImportSupportedFileExtensions action of the same controller will let you know all the different types of files that you may import as a PDF. LoadDocument responds with a JSON-serialized PdfLoadDocumentResponse model, which contains a \"FileId\" property.This identifier is required for the API to know about your document for further manipulations, hence the presence of a \"FileId\" property in the PdfReduceParameters schema (and many other parameters schemas). To download the changes made to a file, you need, of course, to download the new version of the file from the API.  To save your document as a PDF, you will need to use the SaveDocument action of the PDF controller and provide a PdfSaveDocumentParameters data model that contains the identifier of your file.        Errors:    Conventional HTTP response codes are used to indicate the success or failure of an API request.   The Error data model also defines some information about an error that occurred on the API.   Each response model has an Error in its definition, and its sole existence in the serialized response - which should thus always be checked - indicates that something went wrong.  Among the information given by the Error schema, \"ResultCode\" specifies a value of the \"PassportPDFStatus\" enumeration, that defines a first level of error information. \"InternalErrorId\" defines a unique identifier for the error, which comes very handy for us to troubleshoot any issue you may encounter quickly.        Efficiency considerations:    Multipart upload/download is available and lets you directly stream a file to/from the API.  In the PDF controller, LoadDocument/LoadDocumentMultipart and SaveDocument/SaveDocumentToFile may be used to upload/download a document using respectively binary data serialization and streaming multipart HTTP requests.  The second approach should be favored when dealing with large files, as it will be much more efficient in that context.
+ * Another brick in the cloud
  *
  * The version of the OpenAPI document: 1.0.1
  * 
@@ -59,8 +59,6 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
       */
     protected static $openAPITypes = [
         'file_id' => 'string',
-        'file_data' => 'string',
-        'file_name' => 'string',
         'thumbnail_width' => 'int',
         'thumbnail_height' => 'int',
         'thumbnail_background_color' => 'string',
@@ -74,8 +72,6 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
       */
     protected static $openAPIFormats = [
         'file_id' => null,
-        'file_data' => 'byte',
-        'file_name' => null,
         'thumbnail_width' => 'int32',
         'thumbnail_height' => 'int32',
         'thumbnail_background_color' => null,
@@ -110,8 +106,6 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
      */
     protected static $attributeMap = [
         'file_id' => 'FileId',
-        'file_data' => 'FileData',
-        'file_name' => 'FileName',
         'thumbnail_width' => 'ThumbnailWidth',
         'thumbnail_height' => 'ThumbnailHeight',
         'thumbnail_background_color' => 'ThumbnailBackgroundColor',
@@ -125,8 +119,6 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
      */
     protected static $setters = [
         'file_id' => 'setFileId',
-        'file_data' => 'setFileData',
-        'file_name' => 'setFileName',
         'thumbnail_width' => 'setThumbnailWidth',
         'thumbnail_height' => 'setThumbnailHeight',
         'thumbnail_background_color' => 'setThumbnailBackgroundColor',
@@ -140,8 +132,6 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
      */
     protected static $getters = [
         'file_id' => 'getFileId',
-        'file_data' => 'getFileData',
-        'file_name' => 'getFileName',
         'thumbnail_width' => 'getThumbnailWidth',
         'thumbnail_height' => 'getThumbnailHeight',
         'thumbnail_background_color' => 'getThumbnailBackgroundColor',
@@ -209,8 +199,6 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
     public function __construct(array $data = null)
     {
         $this->container['file_id'] = isset($data['file_id']) ? $data['file_id'] : null;
-        $this->container['file_data'] = isset($data['file_data']) ? $data['file_data'] : null;
-        $this->container['file_name'] = isset($data['file_name']) ? $data['file_name'] : null;
         $this->container['thumbnail_width'] = isset($data['thumbnail_width']) ? $data['thumbnail_width'] : 140;
         $this->container['thumbnail_height'] = isset($data['thumbnail_height']) ? $data['thumbnail_height'] : 220;
         $this->container['thumbnail_background_color'] = isset($data['thumbnail_background_color']) ? $data['thumbnail_background_color'] : 'rgba(0,0,0,0)';
@@ -226,8 +214,8 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
     {
         $invalidProperties = [];
 
-        if ($this->container['file_name'] === null) {
-            $invalidProperties[] = "'file_name' can't be null";
+        if ($this->container['file_id'] === null) {
+            $invalidProperties[] = "'file_id' can't be null";
         }
         return $invalidProperties;
     }
@@ -247,7 +235,7 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
     /**
      * Gets file_id
      *
-     * @return string|null
+     * @return string
      */
     public function getFileId()
     {
@@ -257,61 +245,13 @@ class GetDocumentPreviewParameters implements ModelInterface, ArrayAccess
     /**
      * Sets file_id
      *
-     * @param string|null $file_id Specifies the identifier of the file to be previewed.
+     * @param string $file_id Specifies the identifier of the file to be previewed.
      *
      * @return $this
      */
     public function setFileId($file_id)
     {
         $this->container['file_id'] = $file_id;
-
-        return $this;
-    }
-
-    /**
-     * Gets file_data
-     *
-     * @return string|null
-     */
-    public function getFileData()
-    {
-        return $this->container['file_data'];
-    }
-
-    /**
-     * Sets file_data
-     *
-     * @param string|null $file_data Specifies the data of the document to be previewed.
-     *
-     * @return $this
-     */
-    public function setFileData($file_data)
-    {
-        $this->container['file_data'] = $file_data;
-
-        return $this;
-    }
-
-    /**
-     * Gets file_name
-     *
-     * @return string
-     */
-    public function getFileName()
-    {
-        return $this->container['file_name'];
-    }
-
-    /**
-     * Sets file_name
-     *
-     * @param string $file_name Specifies the name of the file to be previewed.
-     *
-     * @return $this
-     */
-    public function setFileName($file_name)
-    {
-        $this->container['file_name'] = $file_name;
 
         return $this;
     }

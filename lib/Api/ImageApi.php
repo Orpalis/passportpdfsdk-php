@@ -12,7 +12,7 @@
 /**
  * PassportPDF API
  *
- * Introduction:    PassportPDF API is a REST API that lets you perform complex operations on documents and images easily.  You may consume the API by using our.NET SDK (other platforms / languages are soon to come), or any REST client by sending your requests to the appropriate endpoints.   A list of all the available endpoints can be found on the API reference page at https://passportpdfapi.com/references/api/index.html        Authentication:    Each available operation has a predefined cost, expressed as a number of tokens.  These tokens are deducted from your \"passport,\" which has a unique identifier that acts as an API key. This key is, therefore, required to be provided with each request for the latter to be honored(except if the operation does not have a cost, typically when you request a simple data with a GET).  Your key must be included in the header of the request, under the name \"X-PassportPdf-API-Key.\"  If you are using the.NET SDK, you can either set your key in the ApiKey property of your API instance(PdfApi or ImageApi, for example) or set it globally in the GlobalConfiguration instance if you want to set it once for the whole life cycle of your application.          Communication with the API:    All the available actions are listed on the API reference page, as previously mentioned.  There are several different controllers, i.e., routes, which categorize the actions.For example, you may use the PDF controller(\"/api/pdf\" route) to perform PDF - related operations, and the Image controller(\"/api/image\") for images.  Each action defines what kind of parameters(if any) is expected, and what kind of response is served.Parameters and responses are represented using data models, or \"schemas,\" and are listed in the \"Schemas\" section of the reference.   Parameters and response models of a given action are both prefixed by the controller name, the action name, and \"Parameters\" / \"Response,\" e.g. \"api/pdf/reduce\" respectively receives and serves a PdfReduceParameters and PdfReduceResponse models.  Using the .NET SDK, you will find the objects to interact with the different controllers in the PassportPDF.Api namespace and all the schemas in the PassportPDF.Model namespace.        Processing documents:    Each document manipulation starts with importing the file onto the API.  The LoadDocument action of the PDF controller lets you import your document as a PDF.  Note that the GetPDFImportSupportedFileExtensions action of the same controller will let you know all the different types of files that you may import as a PDF. LoadDocument responds with a JSON-serialized PdfLoadDocumentResponse model, which contains a \"FileId\" property.This identifier is required for the API to know about your document for further manipulations, hence the presence of a \"FileId\" property in the PdfReduceParameters schema (and many other parameters schemas). To download the changes made to a file, you need, of course, to download the new version of the file from the API.  To save your document as a PDF, you will need to use the SaveDocument action of the PDF controller and provide a PdfSaveDocumentParameters data model that contains the identifier of your file.        Errors:    Conventional HTTP response codes are used to indicate the success or failure of an API request.   The Error data model also defines some information about an error that occurred on the API.   Each response model has an Error in its definition, and its sole existence in the serialized response - which should thus always be checked - indicates that something went wrong.  Among the information given by the Error schema, \"ResultCode\" specifies a value of the \"PassportPDFStatus\" enumeration, that defines a first level of error information. \"InternalErrorId\" defines a unique identifier for the error, which comes very handy for us to troubleshoot any issue you may encounter quickly.        Efficiency considerations:    Multipart upload/download is available and lets you directly stream a file to/from the API.  In the PDF controller, LoadDocument/LoadDocumentMultipart and SaveDocument/SaveDocumentToFile may be used to upload/download a document using respectively binary data serialization and streaming multipart HTTP requests.  The second approach should be favored when dealing with large files, as it will be much more efficient in that context.
+ * Another brick in the cloud
  *
  * The version of the OpenAPI document: 1.0.1
  * 
@@ -5455,7 +5455,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEG
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5472,7 +5472,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGWithHttpInfo
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5560,7 +5560,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGAsync
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5580,7 +5580,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5722,7 +5722,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGFile
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5739,7 +5739,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGFileWithHttpInfo
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5827,7 +5827,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGFileAsync
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5847,7 +5847,7 @@ class ImageApi
     /**
      * Operation imageSaveAsJPEGFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as JPEG.
+     * Saves a previously uploaded image as JPEG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsJPEGParameters $image_save_as_jpeg_parameters An ImageSaveAsJPEGParameters object specifying the parameters of the action. (required)
      *
@@ -5989,7 +5989,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDF
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6006,7 +6006,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6094,7 +6094,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFAsync
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6114,7 +6114,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6256,7 +6256,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFFile
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6273,7 +6273,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFFileWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6361,7 +6361,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFFileAsync
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6381,7 +6381,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF.
+     * Saves a previously uploaded image as PDF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFParameters $image_save_as_pdf_parameters An ImagesaveAsPDFParameters object specifying the parameters of the action. (required)
      *
@@ -6523,7 +6523,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRC
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6540,7 +6540,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6628,7 +6628,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCAsync
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6648,7 +6648,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6790,7 +6790,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCFile
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6807,7 +6807,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCFileWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6895,7 +6895,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCFileAsync
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -6915,7 +6915,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPDFMRCFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as PDF using MRC compression.
+     * Saves a previously uploaded image as PDF using MRC compression, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPDFMRCParameters $image_save_as_pdfmrc_parameters An ImagesaveAsPDFMRCParameters object specifying the parameters of the action. (required)
      *
@@ -7057,7 +7057,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNG
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7074,7 +7074,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGWithHttpInfo
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7162,7 +7162,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGAsync
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7182,7 +7182,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7324,7 +7324,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGFile
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7341,7 +7341,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGFileWithHttpInfo
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7429,7 +7429,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGFileAsync
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7449,7 +7449,7 @@ class ImageApi
     /**
      * Operation imageSaveAsPNGFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as PNG.
+     * Saves a previously uploaded image as PNG, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsPNGParameters $image_save_as_png_parameters An ImageSaveAsPNGParameters object specifying the parameters of the action. (required)
      *
@@ -7591,7 +7591,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFF
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7608,7 +7608,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFWithHttpInfo
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7696,7 +7696,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFAsync
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7716,7 +7716,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7858,7 +7858,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFFile
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7875,7 +7875,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFFileWithHttpInfo
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7963,7 +7963,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFFileAsync
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -7983,7 +7983,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as TIFF.
+     * Saves a previously uploaded image as TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFParameters $image_save_as_tiff_parameters An ImageSaveAsTIFFParameters object specifying the parameters of the action. (required)
      *
@@ -8125,7 +8125,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipage
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8142,7 +8142,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageWithHttpInfo
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8230,7 +8230,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageAsync
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8250,7 +8250,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and sends the file data in a JSON-serialized object.
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8392,7 +8392,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageFile
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8409,7 +8409,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageFileWithHttpInfo
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8497,7 +8497,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageFileAsync
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
@@ -8517,7 +8517,7 @@ class ImageApi
     /**
      * Operation imageSaveAsTIFFMultipageFileAsyncWithHttpInfo
      *
-     * Saves a previously uploaded image as multipage TIFF.
+     * Saves a previously uploaded image as multipage TIFF, and streams the file binary data to the response (this is the most efficient download method).
      *
      * @param  \OpenAPI\Client\Model\ImageSaveAsTIFFMultipageParameters $image_save_as_tiff_multipage_parameters An ImageSaveAsTIFFMultipageParameters object specifying the parameters of the action. (required)
      *
